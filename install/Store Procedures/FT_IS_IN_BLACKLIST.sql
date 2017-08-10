@@ -1,0 +1,15 @@
+DROP FUNCTION IF EXISTS `FT_IS_IN_BLACKLIST`;
+
+DELIMITER $$
+CREATE DEFINER=`root`@`localhost` FUNCTION `FT_IS_IN_BLACKLIST`(`i_email` VARCHAR(255) CHARSET utf8) RETURNS TINYINT UNSIGNED NOT DETERMINISTIC READS SQL DATA SQL SECURITY DEFINER
+BEGIN
+    DECLARE o_result TINYINT DEFAULT 0;
+
+    IF (SELECT 1 = 1 FROM `co_blackmail_list` WHERE `bl_email` = i_email LIMIT 1) THEN
+    	# Is in blackmail list
+    	SET o_result = 1;
+    END IF;
+    
+	RETURN o_result;
+END$$
+DELIMITER ;

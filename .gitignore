@@ -1,0 +1,14 @@
+
+# logs
+logs/
+
+# uploads
+uploads/
+
+# vendors
+vendor/
+
+#composer
+
+composer.lock
+composer.phar

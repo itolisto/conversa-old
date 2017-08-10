@@ -1,0 +1,191 @@
+{% extends "admin/adminBase.twig" %}
+
+{% block content %}
+    
+    <script type="text/javascript">
+        $(document).ready(function() {
+            $('#founded').datepicker();
+            $('#btn-calendar').click(function(){
+                $('#founded').datepicker('show');
+            });
+            
+            $('#expiration').datepicker();
+            $('#btn-calendar-a').click(function(){
+                $('#expiration').datepicker('show');
+            });
+
+            $('#chkbox_change_password').click(function() {
+                var $this = $(this);
+
+                if ($this.is(':checked')) {
+                    $('#password').removeAttr("disabled");
+                    $('#password').val('');
+                } else {
+                    $('#password').attr("disabled","disabled");
+                    $('#password').val('');
+                }
+            });
+        });
+    </script>
+
+    <div class="row">
+        <div class="col-lg-12">
+            <h1 class="page-header">
+                {{lang.labelEditBusiness}}
+            </h1>
+        </div>
+    </div>
+             
+    <div class="row">
+        <div class="col-lg-12">
+            {% include "admin/alerts.twig" %}
+            <ul class="nav nav-tabs">
+                <li {% if tab == 'profile' %}class="active"{% endif %}><a href="#profile" data-toggle="tab">{{lang.labelProfile}}</a></li>
+                <li {% if tab == 'contacts' %}class="active"{% endif %}><a href="#contacts" data-toggle="tab">{{lang.labelContacts}}</a></li>
+            </ul>
+
+            <div class="tab-content">
+                <div class="tab-pane {% if tab == 'profile' %}active{% endif %}" id="profile">
+                    <form role="form" method="post" action="{{ROOT_URL}}/admin/business/edit/{{id}}" enctype="multipart/form-data">
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+                                {{lang.labelpicture}}
+                            </div>
+                            <div class="panel-body">
+                                {% if formValues.avatar_thumb_file_id != '' %}
+                                    <img class="img-thumbnail" src="{{ROOT_URL}}/api/filedownloader?type={{CONST_FOLDER_BUSINESS}}&file={{formValues.avatar_thumb_file_id}}" width="120"/>
+                                {% else %}
+                                    <img class="img-thumbnail" src="http://dummyimage.com/120x120/87e83c/000000.png&text=No+picture" width="120px"/>
+                                {% endif %}
+
+                                {% if formValues.avatar_file_id != '' %}
+                                    <img class="img-thumbnail" src="{{ROOT_URL}}/api/filedownloader?type={{CONST_FOLDER_BUSINESS}}&file={{formValues.avatar_file_id}}" width="480"/>
+                                {% else %}
+                                    <img class="img-thumbnail" src="http://dummyimage.com/640x640/87e83c/000000.png&text=No+picture" width="480"/>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>{{lang.formBusinessAvatar}}</label>
+                            <input type="file" name="file">
+                        </div>
+                        <div class="form-group">
+                            <label>{{lang.formBusinessName}}</label><span class="text-danger">{{lang.noteRequired}}</span>
+                            <input class="form-control" name="name" value="{{formValues.name}}">
+                        </div>
+                        <div class="form-group">
+                            <label>{{lang.formBusinessEmail}}</label><span class="text-danger">{{lang.noteRequired}}</span>
+                            <input class="form-control" name="email" value="{{formValues.email}}">
+                        </div>
+                        <div class="form-group">
+                            <label>{{lang.formBusinessPassword}}</label>
+                            <div class="input-group">
+                                <span class="input-group-addon">
+                                    <input type="checkbox" id="chkbox_change_password" name="chkbox_change_password" value="1">
+                                </span>
+                                <input type="text" class="form-control" id="password" name="password" disabled="disabled" placeholder="{{lang.messageChangePassword}}">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>{{lang.formBusinessAbout}}</label><span class="text-danger">{{lang.noteRequired}}</span>
+                            <textarea class="form-control" rows="3" name="about">{{formValues.about}}</textarea>
+                        </div>
+                        <div class="form-group">
+                            <label>{{lang.formBusinessFounded}}</label><span class="text-danger">{{lang.noteRequired}}</span>
+                            <div class="input-group">
+                                <input class="form-control" id="founded" name="founded" value="{{formValues.founded}}" data-date-format="yyyy-mm-dd" data-date-viewmode="years">
+                                <span class="input-group-btn">
+                                    <button id="btn-calendar" class="btn btn-default" type="button"><i class="fa fa-calendar"></i></button>
+                                </span>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>{{lang.formBusinessExpiration}}</label><span class="text-danger">{{lang.noteRequired}}</span>
+                            <div class="input-group">
+                                <input class="form-control" id="expiration" name="expiration" value="{{formValues.expiration}}" data-date-format="yyyy-mm-dd" data-date-viewmode="years">
+                                <span class="input-group-btn">
+                                    <button id="btn-calendar-a" class="btn btn-default" type="button"><i class="fa fa-calendar"></i></button>
+                                </span>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>{{lang.formMaxDevices}}</label><span class="text-danger">{{lang.noteRequired}}</span>
+                            <input class="form-control" name="max_devices_count" value="{{formValues.max_devices_count}}">
+                        </div>
+                        <div class="form-group">
+                            <label>{{lang.formBusinessCountry}}</label><span class="text-danger">{{lang.noteRequired}}</span>
+                            <select class="form-control" name="country">
+                                {% for country in countriesList %}
+                                    <option value="{{country._id}}" {% if formValues.country == country._id %}selected{% endif %}>{{country.name}}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>{{lang.formBusinessCategory}}</label><span class="text-danger">{{lang.noteRequired}}</span>
+                            <select class="form-control" name="id_category">
+                                {% for category in categoryList %}
+                                    <option value="{{category._id}}" {% if formValues.id_category == category._id %}selected{% endif %}>{{category.title}}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>{{lang.formBusinessPlan}}</label><span class="text-danger">{{lang.noteRequired}}</span>
+                            <select class="form-control" name="plan">
+                                {% for plan in planList %}
+                                    <option value="{{plan._id}}" {% if formValues.plan == plan._id %}selected{% endif %}>{{plan.title}}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <button type="submit" class="btn btn-primary btn-lg btn-block">{{lang.btnSave}}</button>
+                    </form>
+                </div>
+
+                <div class="tab-pane {% if tab == 'contacts' %}active{% endif %}" id="contacts">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>{{lang.formUserAvatar}}</th>
+                                <th>{{lang.formUserName}}</th>
+                                <th>{{lang.formUserEmail}}</th>
+                                <th class="text-right">{{lang.labelCreated}}</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for user in contacts %}
+                                <tr>
+                                    <td>{{user._id}}</td>
+                                    <td>
+                                        {% if user.avatar_thumb_file_id != '' %}
+                                            <img class="img-thumbnail" src="{{ROOT_URL}}/api/filedownloader?file={{user.avatar_thumb_file_id}}" width="60"/>
+                                        {% else %}
+                                            <img class="img-thumbnail" src="http://dummyimage.com/60x60/e2e2e2/7a7a7a&text=nopicture" width="60"/>
+                                        {% endif %}
+                                    </td>
+                                    <td><a href="{{ROOT_URL}}/admin/user/view/{{user._id}}">{{user.name}}</a></td>
+                                    <td>{{user.email}}</td>
+                                    <td class="text-right">{{user.created|date("Y.m.d")}}</td>
+                                    <td class="text-right">
+                                        <div class="btn-group text-left" >
+                                            <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+                                                {{lang.labelAction}} <span class="caret"></span>
+                                            </button>
+                                            <ul class="dropdown-menu" role="menu">
+                                                <li>
+                                                    <a href="{{ROOT_URL}}/admin/user/edit/{{userId}}?action=removeContact&value={{user._id}}">
+                                                        <i class="fa fa-unlink"></i> {{lang.labelRemoveContact}}
+                                                    </a>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
